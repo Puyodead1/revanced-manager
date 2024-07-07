@@ -137,6 +137,10 @@ class ManagerAPI {
     return _prefs.getBool('patchesAutoUpdate') ?? false;
   }
 
+  bool isUseDevPatches() {
+      return _prefs.getBool('useDevPatches') ?? false;
+    }
+
   bool isPatchesChangeEnabled() {
     return _prefs.getBool('patchesChangeEnabled') ?? false;
   }
@@ -172,6 +176,10 @@ class ManagerAPI {
   void setPatchesAutoUpdate(bool value) {
     _prefs.setBool('patchesAutoUpdate', value);
   }
+
+  void setUseDevPatches(bool value) {
+      _prefs.setBool('useDevPatches', value);
+    }
 
   List<Patch> getSavedPatches(String packageName) {
     final List<String> patchesJson =
@@ -464,6 +472,13 @@ class ManagerAPI {
 
   Future<String?> getLatestPatchesReleaseTime() async {
     if (!isUsingAlternativeSources()) {
+      if(isUseDevPatches()) {
+        return await _revancedAPI.getLatestDevReleaseTime(
+          '.json',
+          defaultPatchesRepo,
+        );
+      }
+
       return await _revancedAPI.getLatestReleaseTime(
         '.json',
         defaultPatchesRepo,
@@ -528,6 +543,30 @@ class ManagerAPI {
     }
   }
 
+  Future<String?> getLatestDevPatchesVersion() async {
+      if (!isUsingAlternativeSources()) {
+        if(isUseDevPatches()) {
+            return await _revancedAPI.getLatestDevReleaseVersion(
+              '.json',
+              defaultPatchesRepo,
+            );
+        }
+
+        return await _revancedAPI.getLatestReleaseVersion(
+          '.json',
+          defaultPatchesRepo,
+        );
+      } else {
+        final release =
+            await _githubAPI.getLatestPatchesRelease(getPatchesRepo());
+        if (release != null) {
+          return release['tag_name'];
+        } else {
+          return null;
+        }
+      }
+    }
+
   Future<String> getCurrentManagerVersion() async {
     final PackageInfo packageInfo = await PackageInfo.fromPlatform();
     String version = packageInfo.version;
@@ -541,7 +580,7 @@ class ManagerAPI {
     patchesVersion = _prefs.getString('patchesVersion') ?? '0.0.0';
     if (patchesVersion == '0.0.0' || isPatchesAutoUpdate()) {
       final String newPatchesVersion =
-          await getLatestPatchesVersion() ?? '0.0.0';
+          (isUseDevPatches() ? await getLatestPatchesVersion() : await getLatestDevPatchesVersion()) ?? '0.0.0';
       if (patchesVersion != newPatchesVersion && newPatchesVersion != '0.0.0') {
         await setCurrentPatchesVersion(newPatchesVersion);
       }

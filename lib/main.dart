@@ -13,6 +13,7 @@ import 'package:timezone/data/latest.dart' as tz;
 
 late SharedPreferences prefs;
 Future main() async {
+  FutureBuilder.debugRethrowError = true;
   await setupLocator();
   WidgetsFlutterBinding.ensureInitialized();
   await locator<ManagerAPI>().initialize();

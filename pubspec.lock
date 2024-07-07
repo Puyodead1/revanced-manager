@@ -563,10 +563,10 @@ packages:
     dependency: "direct main"
     description:
       name: language_code
-      sha256: "3124246f599039a89c990d007b00bc41b1526d6400de97cf13a478b7f4b16a83"
+      sha256: "7272519879a86e64fb5f183716ba10cefeb2f191e6e0aa043e0259d0ca0aa122"
       url: "https://pub.dev"
     source: hosted
-    version: "0.4.2"
+    version: "0.5.3+2"
   leak_tracker:
     dependency: transitive
     description:

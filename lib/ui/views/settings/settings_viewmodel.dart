@@ -35,10 +35,19 @@ class SettingsViewModel extends BaseViewModel {
     return _managerAPI.isPatchesAutoUpdate();
   }
 
+  bool isUseDevPatches() {
+      return _managerAPI.isUseDevPatches();
+    }
+
   void setPatchesAutoUpdate(bool value) {
     _managerAPI.setPatchesAutoUpdate(value);
     notifyListeners();
   }
+
+  void setUseDevPatches(bool value) {
+      _managerAPI.setUseDevPatches(value);
+      notifyListeners();
+    }
 
   bool showUpdateDialog() {
     return _managerAPI.showUpdateDialog();
